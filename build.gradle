@@ -35,7 +35,10 @@ dependencies {
 	implementation 'jakarta.validation:jakarta.validation-api:3.1.0'
 // https://mvnrepository.com/artifact/org.springframework.plugin/spring-plugin-core
 	implementation 'org.springframework.plugin:spring-plugin-core:3.0.0'
-
+// https://mvnrepository.com/artifact/org.apache.poi/poi
+	implementation 'org.apache.poi:poi:5.3.0'
+// https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
+	implementation 'org.apache.poi:poi-ooxml:5.3.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -47,51 +50,3 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-//		<dependencies>
-//		<dependency>
-//		<groupId>org.springframework.boot</groupId>
-//            <artifactId>spring-boot-starter-web</artifactId>
-//		</dependency>
-//        <dependency>
-//            <groupId>org.springframework.boot</groupId>
-//<artifactId>spring-boot-starter-tomcat</artifactId>
-//        </dependency>
-//
-//		<!--SpringFox dependencies -->
-//		<!-- SpringDoc dependencies -->
-//		<dependency>
-//		<groupId>org.springdoc</groupId>
-//            <artifactId>springdoc-openapi-ui</artifactId>
-//<version>${springdoc-version}</version>
-//        </dependency>
-//
-//
-//		<dependency>
-//		<groupId>com.github.joschi.jackson</groupId>
-//            <artifactId>jackson-datatype-threetenbp</artifactId>
-//<version>2.6.4</version>
-//        </dependency>
-//<!-- Bean Validation API support -->
-//		<dependency>
-//		<groupId>org.openapitools</groupId>
-//            <artifactId>jackson-databind-nullable</artifactId>
-//<version>0.2.6</version>
-//        </dependency>
-//<dependency>
-//		<groupId>javax.validation</groupId>
-//            <artifactId>validation-api</artifactId>
-//		</dependency>
-//
-//        <dependency>
-//            <groupId>org.springframework.plugin</groupId>
-//<artifactId>spring-plugin-core</artifactId>
-//            <version>2.0.0.RELEASE</version>
-//		</dependency>
-//
-//        <dependency>
-//            <groupId>org.springframework.boot</groupId>
-//<artifactId>spring-boot-starter-test</artifactId>
-//            <scope>test</scope>
-//		</dependency>
-//    </dependencies>

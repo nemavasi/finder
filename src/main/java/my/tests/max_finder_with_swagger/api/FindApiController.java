@@ -51,6 +51,9 @@ public class FindApiController implements FindApi {
             } catch (WrongParameterException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            } catch (Exception e) {
+                log.error("Other exception", e);
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
