@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Stream;
@@ -24,9 +26,9 @@ public class ExcelDataProducer implements DataProducer<Integer> {
 
     @Override
     public Stream<Integer> resolveStream(String urlStore) {
-//        checkPath();
+        //checkPath(urlStore);
         int[] numbers;
-        try (FileInputStream file = new FileInputStream(urlStore)) {
+        try (FileInputStream file = new FileInputStream(loadFileFromOther(urlStore))) {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(0);
             numbers = new int[sheet.getLastRowNum() + 1];
@@ -52,18 +54,25 @@ public class ExcelDataProducer implements DataProducer<Integer> {
     }
 
     //todo check vulnerabilities and add additional checking
-//    private void checkPath() {
+//    private void checkPath(String path) {
 //        try {
 //            Paths.get(path);
-//
 //        } catch (InvalidPathException e) {
 //            throw new WrongParameterException("invalid path parameter");
 //        }
 //    }
 
-//    private File loadFileFromClasspath(String path)
-//            throws FileNotFoundException {
-//        return ResourceUtils.getFile(
-//                "classpath:" + path);
-//    }
+    private File loadFileFromClasspath(String path)
+            throws FileNotFoundException {
+        return ResourceUtils.getFile(
+                "classpath:" + path);
+    }
+
+    private File loadFileFromOther(String path)
+            throws FileNotFoundException {
+        return ResourceUtils.getFile(
+                "file:" + path);
+    }
+
+
 }
