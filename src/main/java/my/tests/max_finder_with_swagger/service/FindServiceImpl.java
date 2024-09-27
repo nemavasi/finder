@@ -1,23 +1,20 @@
 package my.tests.max_finder_with_swagger.service;
 
 import my.tests.max_finder_with_swagger.service.alg.SortedSetOfNMax;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FindServiceImpl implements FindService {
 
-    private final DataProducer dataProducer;
-
-    @Autowired
-    public FindServiceImpl(DataProducer dataProducer) {
-        this.dataProducer = dataProducer;
-    }
-
     @Override
-    public int findNMaxFormFile(String pathToFile, Integer n) {
+    public Integer findNMaxFormFile(String pathToFile, Integer n) {
         validateParameters(pathToFile, n);
         SortedSetOfNMax<Integer> set = new SortedSetOfNMax<>(n, Integer::compare);
+        DataProducer<Integer> dataProducer = lookUpDataProducer();
+        while (dataProducer.hasNext()) {
+            set.addItem(dataProducer.next());
+        }
         return set.getResult();
     }
 
@@ -28,5 +25,10 @@ public class FindServiceImpl implements FindService {
         if (n == null || n < 1) {
             throw new WrongParameterException("Wrong number!");
         }
+    }
+
+    @Lookup
+    DataProducer<Integer> lookUpDataProducer(){
+        return null;
     }
 }

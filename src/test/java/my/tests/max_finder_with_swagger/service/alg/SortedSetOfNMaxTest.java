@@ -53,4 +53,18 @@ public class SortedSetOfNMaxTest {
         assertEquals("bbb", set.getResult());
     }
 
+    @Test
+    void positiveCaseWithOnlyOneElement() {
+        SortedSetOfNMax<String> set = new SortedSetOfNMax<>(1, String::compareTo);
+        set.addItems(Stream.of("aaa").sequential().iterator());
+        assertEquals("aaa", set.getResult());
+    }
+
+    @Test
+    void positiveCaseWithLessElement() {
+        SortedSetOfNMax<String> set = new SortedSetOfNMax<>(2, String::compareTo);
+        set.addItems(Stream.of("aaa").sequential().iterator());
+        assertNull(set.getResult());
+    }
+
 }

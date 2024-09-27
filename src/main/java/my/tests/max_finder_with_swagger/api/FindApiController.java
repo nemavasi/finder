@@ -46,7 +46,7 @@ public class FindApiController implements FindApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                int result = findService.findNMaxFormFile(p, n);
+                Integer result = findService.findNMaxFormFile(p, n);
                 return new ResponseEntity<>(String.valueOf(result), HttpStatus.OK);
             } catch (WrongParameterException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
