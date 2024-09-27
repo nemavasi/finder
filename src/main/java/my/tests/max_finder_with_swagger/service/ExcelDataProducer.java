@@ -1,11 +1,13 @@
 package my.tests.max_finder_with_swagger.service;
 
 
+import my.tests.max_finder_with_swagger.App;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.boot.system.ApplicationHome;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
@@ -14,8 +16,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Stream;
@@ -28,7 +28,7 @@ public class ExcelDataProducer implements DataProducer<Integer> {
     public Stream<Integer> resolveStream(String urlStore) {
         //checkPath(urlStore);
         int[] numbers;
-        try (FileInputStream file = new FileInputStream(loadFileFromOther(urlStore))) {
+        try (FileInputStream file = new FileInputStream(dangerousLoadFileFromOther(urlStore))) {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(0);
             numbers = new int[sheet.getLastRowNum() + 1];
@@ -68,11 +68,19 @@ public class ExcelDataProducer implements DataProducer<Integer> {
                 "classpath:" + path);
     }
 
-    private File loadFileFromOther(String path)
+    private File dangerousLoadFileFromOther(String path)
             throws FileNotFoundException {
         return ResourceUtils.getFile(
                 "file:" + path);
     }
 
+    private File loadFileFromJarDir(String path) throws FileNotFoundException {
 
+        ApplicationHome home = new ApplicationHome(App.class);
+        home.getDir();    // returns the folder where the jar is.
+        home.getSource(); // returns the jar absolute path.
+
+        return ResourceUtils.getFile(
+                "file:" + home.getDir() + path);
+    }
 }
