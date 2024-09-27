@@ -26,7 +26,7 @@ public class ExcelDataProducer implements DataProducer<Integer> {
     public Stream<Integer> resolveStream(String urlStore) {
 //        checkPath();
         int[] numbers;
-        try (FileInputStream file = new FileInputStream(loadFileFromClasspath(urlStore))) {
+        try (FileInputStream file = new FileInputStream(urlStore)) {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(0);
             numbers = new int[sheet.getLastRowNum() + 1];
@@ -61,9 +61,9 @@ public class ExcelDataProducer implements DataProducer<Integer> {
 //        }
 //    }
 
-    private File loadFileFromClasspath(String path)
-            throws FileNotFoundException {
-        return ResourceUtils.getFile(
-                "classpath:" + path);
-    }
+//    private File loadFileFromClasspath(String path)
+//            throws FileNotFoundException {
+//        return ResourceUtils.getFile(
+//                "classpath:" + path);
+//    }
 }
