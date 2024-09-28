@@ -14,4 +14,6 @@ public class SortedSetOfNMaxItem<T> {
     private T value;
     private SortedSetOfNMaxItem<T> left;
     private SortedSetOfNMaxItem<T> right;
+    private SortedSetOfNMaxItem<T> parent;
+    private int height = 1;
 }

@@ -31,26 +31,11 @@ public class SortedSetOfNMax<T> {
             root = item;
             currentSize = 1;
         } else {
-            insert(root, item);
+            root = insertNew(root, item);
             if (currentSize > maxSize) {
                 removeMinItem();
             }
         }
-    }
-
-    private void removeMinItem() {
-        SortedSetOfNMaxItem<T> currentItem = root;
-        SortedSetOfNMaxItem<T> itemBefore = null;
-        while (currentItem.getLeft() != null) {
-            itemBefore = currentItem;
-            currentItem = currentItem.getLeft();
-        }
-        if (currentItem == root) {
-            root = root.getRight();
-        } else {
-            itemBefore.setLeft(null);
-        }
-        currentSize--;
     }
 
     private void insert(SortedSetOfNMaxItem<T> localRoot, SortedSetOfNMaxItem<T> item) {
@@ -71,6 +56,65 @@ public class SortedSetOfNMax<T> {
                 insert(localRoot.getRight(), item);
             }
         }
+    }
+
+    private SortedSetOfNMaxItem<T> insertNew(SortedSetOfNMaxItem<T> localRoot, SortedSetOfNMaxItem<T> item) {
+        if (localRoot == null) {
+            currentSize++;
+            return item;
+        }
+        int comp = comparator.compare(localRoot.getValue(), item.getValue());
+        if (comp > 0) {
+            localRoot.setLeft(insertNew(localRoot.getLeft(), item));
+        } else if (comp < 0) {
+            localRoot.setRight(insertNew(localRoot.getRight(), item));
+        }
+        return balanceNode(localRoot);
+    }
+
+    private SortedSetOfNMaxItem<T> balanceNode(SortedSetOfNMaxItem<T> localRoot) {
+        fixHeight(localRoot);
+        int balance = bFactor(localRoot);
+        //Left Left
+        if (balance > 1 && bFactor(localRoot.getLeft()) >= 0) {
+            return rotateRight(localRoot);
+        }
+
+        //Left Right
+        if (balance > 1 && bFactor(localRoot.getLeft()) < 0) {
+            localRoot.setLeft(rotateLeft(localRoot.getLeft()));
+            return rotateRight(localRoot);
+        }
+
+        //Right Right
+        if (balance < -1 && bFactor(localRoot.getRight()) <= 0) {
+            return rotateLeft(localRoot);
+        }
+
+        //Right Left
+        if (balance < -1 && bFactor(localRoot.getRight()) > 0) {
+            localRoot.setRight(rotateRight(localRoot.getRight()));
+            return rotateLeft(localRoot);
+        }
+
+        return localRoot;
+    }
+
+    private void removeMinItem() {
+        SortedSetOfNMaxItem<T> currentItem = root;
+        SortedSetOfNMaxItem<T> itemBefore = null;
+        while (currentItem.getLeft() != null) {
+            itemBefore = currentItem;
+            currentItem = currentItem.getLeft();
+        }
+        if (currentItem == root) {
+            root = root.getRight();
+        } else {
+            itemBefore.setLeft(currentItem.getRight());
+            itemBefore.setHeight(itemBefore.getHeight() - 1);
+        }
+        root = balanceNode(root);
+        currentSize--;
     }
 
     public T getResult() {
@@ -95,6 +139,38 @@ public class SortedSetOfNMax<T> {
             currentItem = currentItem.getLeft();
         }
         return currentItem;
+    }
+
+    private int height(SortedSetOfNMaxItem<T> item) {
+        return item != null ? item.getHeight() : 0;
+    }
+
+    private int bFactor(SortedSetOfNMaxItem<T> item) {
+        return height(item.getLeft()) - height(item.getRight());
+    }
+
+    private void fixHeight(SortedSetOfNMaxItem<T> item) {
+        int hl = height(item.getLeft());
+        int hr = height(item.getRight());
+        item.setHeight(hl > hr ? hl : hr + 1);
+    }
+
+    private SortedSetOfNMaxItem<T> rotateLeft(SortedSetOfNMaxItem<T> item) {
+        SortedSetOfNMaxItem<T> oldRight = item.getRight();
+        item.setRight(oldRight.getLeft());
+        oldRight.setLeft(item);
+        fixHeight(item);
+        fixHeight(oldRight);
+        return oldRight;
+    }
+
+    private SortedSetOfNMaxItem<T> rotateRight(SortedSetOfNMaxItem<T> item) {
+        SortedSetOfNMaxItem<T> oldLeft = item.getLeft();
+        item.setLeft(oldLeft.getRight());
+        oldLeft.setRight(item);
+        fixHeight(item);
+        fixHeight(oldLeft);
+        return oldLeft;
     }
 
 }

@@ -13,6 +13,14 @@ public class SortedSetOfNMaxTest {
     private int[] numbers = new int[]{2, 3, 4, 5, 6, 3, 4, 5, 6, 6, 7, 8, 8, 8, 9, 113, 56, 33};
 
     @Test
+    void positiveCaseWithInteger5() {
+        SortedSetOfNMax<Integer> set = new SortedSetOfNMax<>(5, Integer::compare);
+        set.addItems(IntStream.of(numbers).iterator());
+        assertEquals(8, set.getResult());
+    }
+
+
+    @Test
     void positiveCaseWithInteger() {
         SortedSetOfNMax<Integer> set = new SortedSetOfNMax<>(2, Integer::compare);
         set.addItems(IntStream.of(numbers).iterator());
