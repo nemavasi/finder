@@ -1,10 +1,9 @@
 package my.tests.max_finder_with_swagger.service;
 
+import my.tests.max_finder_with_swagger.service.alg.SetOfNMax;
 import my.tests.max_finder_with_swagger.service.alg.SortedSetOfNMax;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.stream.Stream;
 
 @Service
 public class FindServiceImpl implements FindService {
@@ -19,9 +18,8 @@ public class FindServiceImpl implements FindService {
     @Override
     public Integer findNMaxFormFile(String pathToFile, Integer n) {
         validateParameters(pathToFile, n);
-        SortedSetOfNMax<Integer> set = new SortedSetOfNMax<>(n, Integer::compare);
-        Stream<Integer> stream = dataProducer.resolveStream(pathToFile);
-        stream.forEach(set::addItem);
+        SetOfNMax<Integer> set = new SortedSetOfNMax<>(n, Integer::compare);
+        dataProducer.resolveStream(pathToFile, set);
         return set.getResult();
     }
 

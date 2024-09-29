@@ -3,7 +3,7 @@ package my.tests.max_finder_with_swagger.service.alg;
 import java.util.Comparator;
 import java.util.Iterator;
 
-public class SortedSetOfNMax<T> {
+public class SortedSetOfNMax<T> implements SetOfNMax<T> {
 
     private Comparator<T> comparator;
     private int maxSize = 0;
@@ -16,12 +16,14 @@ public class SortedSetOfNMax<T> {
         this.comparator = comparator;
     }
 
+    @Override
     public void addItems(Iterator<T> itemValuesIterator) {
         while (itemValuesIterator.hasNext()) {
             addItem(itemValuesIterator.next());
         }
     }
 
+    @Override
     public void addItem(T itemValue) {
         SortedSetOfNMaxItem<T> item = new SortedSetOfNMaxItem<>(itemValue);
         if (maxSize < 1) {
@@ -33,27 +35,8 @@ public class SortedSetOfNMax<T> {
         } else {
             root = insertNew(root, item);
             if (currentSize > maxSize) {
-                removeMinItem();
-            }
-        }
-    }
-
-    private void insert(SortedSetOfNMaxItem<T> localRoot, SortedSetOfNMaxItem<T> item) {
-        int comp = comparator.compare(localRoot.getValue(), item.getValue());
-        if (comp > 0) {
-            if (localRoot.getLeft() == null) {
-                localRoot.setLeft(item);
-                currentSize++;
-            } else {
-                insert(localRoot.getLeft(), item);
-            }
-
-        } else if (comp < 0) {
-            if (localRoot.getRight() == null) {
-                localRoot.setRight(item);
-                currentSize++;
-            } else {
-                insert(localRoot.getRight(), item);
+                //removeMinItem();
+                root = deleteMinItem(root, null);
             }
         }
     }
@@ -70,6 +53,32 @@ public class SortedSetOfNMax<T> {
             localRoot.setRight(insertNew(localRoot.getRight(), item));
         }
         return balanceNode(localRoot);
+    }
+
+
+    private SortedSetOfNMaxItem<T> deleteMinItem(SortedSetOfNMaxItem<T> currentNode, SortedSetOfNMaxItem<T> parentNode) {
+        if (currentNode.getLeft() != null) {
+            currentNode.setLeft(deleteMinItem(currentNode.getLeft(), currentNode));
+            return balanceNode(currentNode);
+        } else {
+            if (currentNode.getRight() == null) {
+                currentSize--;
+                return null;
+            } else {
+                currentSize--;
+                return currentNode.getRight();
+            }
+
+        }
+    }
+
+    @Override
+    public T getResult() {
+        if (currentSize == 0 || currentSize < maxSize) {
+            return null;
+        } else {
+            return min().getValue();
+        }
     }
 
     private SortedSetOfNMaxItem<T> balanceNode(SortedSetOfNMaxItem<T> localRoot) {
@@ -100,31 +109,6 @@ public class SortedSetOfNMax<T> {
         return localRoot;
     }
 
-    private void removeMinItem() {
-        SortedSetOfNMaxItem<T> currentItem = root;
-        SortedSetOfNMaxItem<T> itemBefore = null;
-        while (currentItem.getLeft() != null) {
-            itemBefore = currentItem;
-            currentItem = currentItem.getLeft();
-        }
-        if (currentItem == root) {
-            root = root.getRight();
-        } else {
-            itemBefore.setLeft(currentItem.getRight());
-            itemBefore.setHeight(itemBefore.getHeight() - 1);
-        }
-        root = balanceNode(root);
-        currentSize--;
-    }
-
-    public T getResult() {
-        if (currentSize == 0 || currentSize < maxSize) {
-            return null;
-        } else {
-            return min().getValue();
-        }
-    }
-
     private SortedSetOfNMaxItem<T> max() {
         var currentItem = root;
         while (currentItem.getRight() != null) {
@@ -150,9 +134,11 @@ public class SortedSetOfNMax<T> {
     }
 
     private void fixHeight(SortedSetOfNMaxItem<T> item) {
-        int hl = height(item.getLeft());
-        int hr = height(item.getRight());
-        item.setHeight(hl > hr ? hl : hr + 1);
+        if (item != null) {
+            int hl = height(item.getLeft());
+            int hr = height(item.getRight());
+            item.setHeight((Math.max(hl, hr)) + 1);
+        }
     }
 
     private SortedSetOfNMaxItem<T> rotateLeft(SortedSetOfNMaxItem<T> item) {
