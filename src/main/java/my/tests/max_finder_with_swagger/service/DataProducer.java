@@ -1,7 +1,7 @@
 package my.tests.max_finder_with_swagger.service;
 
-import java.util.stream.Stream;
+import my.tests.max_finder_with_swagger.service.alg.SetOfNMax;
 
 public interface DataProducer<T>  {
-    Stream<T> resolveStream(String urlStore);
+    void resolveStream(String urlStore, SetOfNMax<T> set);
 }

@@ -2,6 +2,7 @@ package my.tests.max_finder_with_swagger.service;
 
 
 import my.tests.max_finder_with_swagger.App;
+import my.tests.max_finder_with_swagger.service.alg.SetOfNMax;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,38 +17,29 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.stream.Stream;
 
 @Component
 @Primary
 public class ExcelDataProducer implements DataProducer<Integer> {
 
     @Override
-    public Stream<Integer> resolveStream(String urlStore) {
-        //checkPath(urlStore);
-        int[] numbers;
+    public void resolveStream(String urlStore, SetOfNMax<Integer> set) {
         try (FileInputStream file = new FileInputStream(dangerousLoadFileFromOther(urlStore))) {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(0);
-            numbers = new int[sheet.getLastRowNum() + 1];
-            int counter = 0;
             for (Row row : sheet) {
                 Iterator<Cell> cellIterator = row.cellIterator();
                 Cell cell = cellIterator.next();
                 switch (cell.getCellType()) {
                     case CellType.NUMERIC:
-                        numbers[counter] = ((int) cell.getNumericCellValue());
+                        set.addItem((int) cell.getNumericCellValue());
                         break;
                     case CellType.STRING:
-                        numbers[counter] = (Integer.parseInt(cell.getStringCellValue()));
+                        set.addItem(Integer.parseInt(cell.getStringCellValue()));
                         break;
                 }
-                counter++;
             }
-
-            return Arrays.stream(numbers).boxed();
         } catch (IOException e) {
             throw new WrongParameterException(e.getMessage());
         }
